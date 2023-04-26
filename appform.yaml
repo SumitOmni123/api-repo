@@ -1,0 +1,1193 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Omni Appform APIs
+
+paths:
+  /appform/file:
+    post:
+      summary: upload file
+      operationId: createAppformFromCsv
+      tags:
+        - Loan Application
+      responses:
+        '200':
+          description: Appform csv file upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanApplicationResponse"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+  /appform:
+    post:
+      summary: Create Loan Application Request
+      operationId: createAppform
+      tags:
+        - Loan Application
+      responses:
+        "200":
+          description: Appform creation successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanApplicationResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+
+components:
+  schemas:
+    Ack:
+      required:
+        - ack
+      properties:
+        ack:
+          $ref: "#/components/schemas/AckBody"
+      type: object
+    LoanApplicationResponse:
+      properties:
+        uploadId:
+          type: string
+      type: object
+    AckBody:
+      required:
+        - error
+        - traceId
+        - timestamp
+      properties:
+        error:
+          example: "0"
+          type: string
+        traceId:
+          example: e8cc6822-d4bb-4eb1-9e1b-4996fbff8acb
+          type: string
+        timestamp:
+          example: "2018-12-06T11:39:57.153Z"
+          type: string
+      type: object
+
+    CreateLoanApplicationRequest:
+      required:
+        - loanApplications
+      properties:
+        loanApplications:
+          items:
+            $ref: "#/components/schemas/LoanApplication"
+          type: array
+      type: object
+    UTCTime:
+      example: "2016-07-22T00:00:00Z"
+      format: "yyyy-mm-ddThh:MM:ssZ"
+      type: string
+    LoanApplication:
+      required:
+        - loanApplicationId
+      properties:
+        createdDate:
+          $ref: "#/components/schemas/UTCTime"
+        loanApplicationId:
+          example: "e8cc6822bd4bbb4eb1b9e1b4996fbff8acb"
+          type: string
+        type:
+          $ref: "#/components/schemas/LoanType"
+        borrower:
+          $ref: "#/components/schemas/Borrower"
+        collaterals:
+          items:
+            $ref: "#/components/schemas/Collateral"
+          type: array
+        guarantors:
+          items:
+            $ref: "#/components/schemas/Guarantor"
+          type: array
+        applicants:
+          items:
+            $ref: "#/components/schemas/Applicant"
+          type: array
+        terms:
+          $ref: "#/components/schemas/LoanTerms"
+        description:
+          example: A short description of the loan application
+          type: string
+        url:
+          example: url
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/LoanExtensibleData"
+      type: object
+    LoanType:
+      type: string
+      enum:
+        - CASHFLOW
+        - PERSONAL
+        - HOME
+        - VEHICLE
+        - BUSINESS
+    Borrower:
+      required:
+        - primaryId
+        - primaryIdType
+        - category
+        - name
+        - contactDetails
+        - additionalIdentifiers
+        - documents
+      properties:
+        primaryId:
+          example: CPAA1234A
+          type: string
+        primaryIdType:
+          $ref: "#/components/schemas/BorrowerPrimaryIdType"
+        category:
+          $ref: "#/components/schemas/BorrowerCategory"
+        name:
+          example: John doe
+          type: string
+        contactDetails:
+          items:
+            $ref: "#/components/schemas/ContactDetail"
+          type: array
+        additionalIdentifiers:
+          items:
+            $ref: "#/components/schemas/AdditionalIdentifier"
+          type: array
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        url:
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/BorrowerExtensibleData"
+      type: object
+    BorrowerPrimaryIdType:
+      type: string
+      enum:
+        - PAN
+        - MOBILE
+        - AADHAAR
+    BorrowerCategory:
+      type: string
+      enum:
+        - ORGANIZATION
+        - INDIVIDUAL
+    ApplicantExtensibleData:
+      properties:
+        omniExtensibleCoApplicantData:
+          $ref: "#/components/schemas/OmniExtensibleCoApplicantData"
+      type: object
+    OmniExtensibleCoApplicantData:
+      required:
+        - age
+        - birthCountry
+        - nationality
+        - emplomentType
+        - occupation
+        - cibil
+        - shareholding
+      properties:
+        fatherName:
+          type: string
+        motherName:
+          type: string
+        spouseName:
+          type: string
+        noOfDependants:
+          type: integer
+        gender:
+          type: string
+        dob:
+          type: string
+        age:
+          type: integer
+        birthCountry:
+          type: string
+        maritalStatus:
+          type: string
+        religion:
+          type: string
+        nationality:
+          type: string
+        caste:
+          type: string
+        education:
+          type: string
+        emplomentType:
+          type: string
+        occupation:
+          type: string
+        cibil:
+          type: integer
+        UNSCRcheck:
+          type: boolean
+        politicallyExposed:
+          type: boolean
+        nsdl:
+          type: string
+        shareholding:
+          type: string
+        originatorScoreOnApplicant:
+          type: integer
+        creditBureauVerification:
+          type: string
+        faceMatch:
+          type: string
+        employer:
+          $ref: "#/components/schemas/Employer"
+        incomeDetails:
+          $ref: "#/components/schemas/IncomeDetails"
+        creditLine:
+          $ref: "#/components/schemas/CreditLine"
+        kyc:
+          $ref: "#/components/schemas/Kyc"
+        pennyCheck:
+          $ref: "#/components/schemas/PennyCheck"
+        underwritingParameters:
+          $ref: "#/components/schemas/UnderwritingParameters"
+        business:
+          $ref: "#/components/schemas/Business"
+        companyFinancials:
+          $ref: "#/components/schemas/CompanyFinancials"
+      type: object
+    Employer:
+      required:
+        - yearsOfExperience
+      properties:
+        category:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        yearsOfExperience:
+          type: integer
+        designation:
+          type: string
+        totalWorkExperience:
+          type: integer
+      type: object
+    IncomeDetails:
+      required:
+        - netMonthlyIncome
+      properties:
+        sourceOfIncome:
+          type: string
+        netMonthlyIncome:
+          type: integer
+        grossAnnualIncome:
+          type: integer
+        disposableIncome:
+          type: integer
+        otherIncome:
+          type: integer
+        incomePaymentMode:
+          type: string
+      type: object
+    BankAccount:
+      properties:
+        type:
+          type: string
+        holderName:
+          type: string
+        accountNumber:
+          type: string
+        bankName:
+          type: string
+        branch:
+          type: string
+        purpose:
+          type: string
+        ifscCode:
+          type: string
+        paymentMode:
+          type: string
+      type: object
+    CreditLine:
+      properties:
+        creditLimit:
+          type: integer
+        dateOfCreditLimit:
+          type: string
+        expiryDateOfCreditLimit:
+          type: string
+      type: object
+    Kyc:
+      properties:
+        ckycComplete:
+          type: string
+        consentCkycSearchDate:
+          type: string
+        consentDownloadDate:
+          type: string
+        okycComplete:
+          type: string
+        kycPolicy:
+          type: string
+        vkycImageLink:
+          type: string
+        vkcyImageLinkPassword:
+          type: string
+        vkcyDetail:
+          type: string
+        ckycId:
+          type: string
+      type: object
+    PennyCheck:
+      properties:
+        accountReference:
+          type: string
+        bankName:
+          type: string
+        verifiedName:
+          type: string
+        pennyCheckDate:
+          type: string
+      type: object
+    UnderwritingParameters:
+      required:
+        - foir
+        - ltv
+        - iir
+      properties:
+        nameOfBureau:
+          type: string
+        bureauVintage:
+          type: integer
+        bureauScore:
+          type: integer
+        bureauReportJsonLink:
+          type: string
+        bureauReportJsonLinkPassword:
+          type: string
+        bureauJsonLink:
+          type: string
+        bureauJsonLinkPassword:
+          type: string
+        totalExistingObligations:
+          type: integer
+        creditCardLimit:
+          type: integer
+        noOfCreditCards:
+          type: integer
+        totalNumberOfUnsecuredLoans:
+          type: integer
+        valueOfTotalUnsecuredLoans:
+          type: integer
+        totalNumberOfLoans:
+          type: string
+        valueOfTotalLoans:
+          type: integer
+        numberOfEnquiries3m:
+          type: integer
+        numberOfEnquiries6m:
+          type: integer
+        numberOfEnquiries12m:
+          type: integer
+        numberOfWriteoffSuitfiledSettled12m:
+          type: integer
+        maxDpdLast6m:
+          type: integer
+        maxDpdLast12m:
+          type: integer
+        maxOverdueOverall:
+          type: integer
+        totalOverdueAmountLast12m:
+          type: integer
+        amountOfLoanSettledLast12m:
+          type: integer
+        natureOfLoanSettled1:
+          type: string
+        natureOfLoanSettled2:
+          type: string
+        totalEmiBounces:
+          type: integer
+        bouncesLast6m:
+          type: integer
+        bouncesLast12m:
+          type: integer
+        bureauValidityDate:
+          type: string
+        foir:
+          type: integer
+        ltv:
+          type: integer
+        iir:
+          type: integer
+        abbEmiRatio:
+          type: integer
+        dscr:
+          type: integer
+      type: object
+    Business:
+      required:
+        - registrationDate
+        - industrySector
+        - cibil
+        - crisilRating
+      properties:
+        type:
+          type: string
+        uan:
+          type: string
+        cin:
+          type: string
+        registrationDate:
+          type: string
+        operationDate:
+          type: string
+        industrySector:
+          type: string
+        noOfEmployees:
+          type: integer
+        businessType:
+          type: string
+        subSector:
+          type: string
+        cibil:
+          type: integer
+        crisilRating:
+          type: integer
+        cgtmse:
+          type: string
+        ssiRegNo:
+          type: string
+        nsdl:
+          type: string
+      type: object
+    CompanyFinancials:
+      properties:
+        annualBusinessTurnover:
+          type: integer
+        annualGrossProfit:
+          type: integer
+        annualBusniessEditda:
+          type: integer
+        avgMonthlyNetProfit5y:
+          type: integer
+        avgAnnualNetIncome6m:
+          type: integer
+        avgAnnualNetProfit6m:
+          type: integer
+        avgGstReturn1y:
+          type: integer
+        avgItReturn1y:
+          type: integer
+      type: object
+
+    AddressExtensibleData:
+      properties:
+        omniExtensibleAddressData:
+          $ref: "#/components/schemas/OmniExtensibleAddressData"
+      type: object
+
+    OmniExtensibleAddressData:
+      properties:
+        ownership:
+          type: string
+        yearsInAddress:
+          type: integer
+      type: object
+
+    LoanExtensibleData:
+      properties:
+        omniExtensibleLoanAppData:
+          $ref: "#/components/schemas/OmniExtensibleLoanAppData"
+      type: object
+
+    OmniExtensibleLoanAppData:
+      properties:
+        laonId:
+          type: string
+        bulkDocUploadUrls:
+          type: string
+      type: object
+
+    ContactExtensibleData:
+      properties:
+        omniExtensibleContactData:
+          $ref: "#/components/schemas/OmniExtensibleContactData"
+      type: object
+
+    OmniExtensibleContactData:
+      required:
+        - typeCode
+        - countryCode
+      properties:
+        typeCode:
+          type: string
+        countryCode:
+          type: string
+      type: object
+
+    TermsExtensibleData:
+      properties:
+        omniExtensibleTermsData:
+          $ref: "#/components/schemas/OmniExtensibleTermsData"
+      type: object
+
+    OmniExtensibleTermsData:
+      required:
+        - originatorCustomerId
+        - originatorApprovalTime
+        - loanProductId
+        - productType
+        - loanStartDate
+      properties:
+        originatorCustomerId:
+          type: string
+        principalOutstanding:
+          type: string
+        principalCollected:
+          type: string
+        interestCollected:
+          type: string
+        lenderId:
+          type: string
+        lenderName:
+          type: string
+        loanProductId:
+          type: string
+        productType:
+          type: string
+        channel:
+          type: string
+        bpiAmount:
+          type: string
+        creditLineRevolving:
+          type: boolean
+        loanStartDate:
+          $ref: "#/components/schemas/UTCTime"
+        downpayment:
+          type: integer
+        sanctionDate:
+          type: string
+        firstEMIDueDate:
+          type: string
+        apr:
+          type: string
+        coolingOffPeriod:
+          type: string
+        repaymentFrequency:
+          type: string
+        insuranceAmount:
+          type: string
+        lineSetupFee:
+          type: string
+        ProcessingFee:
+          type: string
+        disbursalAmount:
+          type: string
+        fundingAllocation:
+          type: string
+        topUp:
+          type: string
+        balanceTransfer:
+          type: string
+        restructure:
+          type: string
+      type: object
+    ContactDetail:
+      required:
+        - type
+        - phone
+        - email
+        - address
+      properties:
+        type:
+          $ref: "#/components/schemas/ContactDetailType"
+        description:
+          type: string
+        phone:
+          example: "7777777777"
+          type: string
+        email:
+          example: johndoe@defenterprises
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        url:
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/ContactExtensibleData"
+      type: object
+    ContactDetailType:
+      type: string
+      enum:
+        - PRIMARY
+        - OTHER
+    Address:
+      required:
+        - hba
+        - srl
+        - als
+        - vtc
+        - pincode
+        - district
+        - state
+        - country
+      properties:
+        co:
+          example: <care of>
+          type: string
+        hba:
+          example: <House/Building/Apartment>
+          type: string
+        srl:
+          example: <Street/Road/Lane>
+          type: string
+        landmark:
+          example: <landmark>
+          type: string
+        als:
+          example: <Area/Locality/Sector>
+          type: string
+        vtc:
+          example: <Village/Town/City>
+          type: string
+        pinCode:
+          example: "220020"
+          type: string
+        po:
+          example: po
+          type: string
+        district:
+          example: district
+          type: string
+        state:
+          example: state
+          type: string
+        country:
+          example: country
+          type: string
+        url:
+          example: <digital address>
+          type: string
+        latitude:
+          example: "38.8951"
+          type: string
+        longitude:
+          example: "-77.0364"
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/AddressExtensibleData"
+      type: object
+    AdditionalIdentifier:
+      required:
+        - id
+        - additionalIdentifierType
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        additionalIdentifierType:
+          $ref: "#/components/schemas/AdditionalIdentifierType"
+        extensibleData:
+          type: object
+      type: object
+    AdditionalIdentifierType:
+      type: string
+      enum:
+        - PAN
+        - MOBILE
+        - AADHAAR
+    Collateral:
+      required:
+        - collateralPrimaryId
+        - collateralPrimaryIdType
+        - type
+        - additionalIdentifiers
+        - parties
+        - documents
+      properties:
+        collateralPrimaryId:
+          example: <GSTIN>_<INVOICENUM>
+          type: string
+        collateralPrimaryIdType:
+          $ref: "#/components/schemas/CollateralPrimaryIdType"
+        description:
+          type: string
+        type:
+          example: GST_INVOICE
+          type: string
+        additionalIdentifiers:
+          items:
+            $ref: "#/components/schemas/AdditionalIdentifier"
+          type: array
+        valuation:
+          $ref: "#/components/schemas/Valuation"
+        parties:
+          items:
+            $ref: "#/components/schemas/Party"
+          type: array
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        url:
+          example: url
+          type: string
+        extensibleData:
+          type: object
+      type: object
+    CollateralPrimaryIdType:
+      type: string
+      enum:
+        - GST_INVOICE
+        - VIN
+        - OTHER
+    Valuation:
+      required:
+        - value
+        - currency
+        - date
+        - source
+      properties:
+        value:
+          type: string
+          example: "2000"
+        currency:
+          type: string
+          example: INR
+        date:
+          $ref: "#/components/schemas/UTCTime"
+        source:
+          type: string
+          example: GSTIN
+        url:
+          type: string
+        extensibleData:
+          type: object
+      type: object
+    Party:
+      required:
+        - primaryIdType
+        - primaryId
+        - category
+        - name
+        - relationshipWithCollateral
+        - contactDetails
+        - documents
+      properties:
+        primaryIdType:
+          $ref: "#/components/schemas/EntityPrimaryIdType"
+        primaryId:
+          example: AAAAA8888A
+          type: string
+        category:
+          $ref: "#/components/schemas/EntityCategory"
+        name:
+          example: John doe
+          type: string
+        relationshipWithCollateral:
+          example: relationshipWithCollateral
+          type: string
+        contactDetails:
+          items:
+            $ref: "#/components/schemas/ContactDetail"
+          type: array
+        additionalIdentifiers:
+          items:
+            $ref: "#/components/schemas/AdditionalIdentifier"
+          type: array
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        url:
+          example: url
+          type: string
+        extensibleData:
+          type: object
+      type: object
+    EntityPrimaryIdType:
+      type: string
+      enum:
+        - PAN
+        - MOBILE
+        - AADHAAR
+    EntityCategory:
+      type: string
+      enum:
+        - ORGANIZATION
+        - INDIVIDUAL
+    Guarantor:
+      required:
+        - primaryIdType
+        - primaryId
+        - category
+        - contactDetails
+        - additionalIdentifiers
+        - documents
+      properties:
+        primaryIdType:
+          $ref: "#/components/schemas/EntityPrimaryIdType"
+        primaryId:
+          example: CPAA1234A
+          type: string
+        category:
+          $ref: "#/components/schemas/EntityCategory"
+        name:
+          example: John doe
+          type: string
+        description:
+          type: string
+        relationshipWithBorrower:
+          example: Father
+          type: string
+        contactDetails:
+          items:
+            $ref: "#/components/schemas/ContactDetail"
+          type: array
+        additionalIdentifiers:
+          items:
+            $ref: "#/components/schemas/AdditionalIdentifier"
+          type: array
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        url:
+          type: string
+        extensibleData:
+          type: object
+      type: object
+    Applicant:
+      required:
+        - primaryIdType
+        - primaryId
+        - category
+        - name
+        - contactDetails
+        - additionalIdentifiers
+        - documents
+      properties:
+        primaryIdType:
+          $ref: "#/components/schemas/EntityPrimaryIdType"
+        primaryId:
+          example: AAAAA8888A
+          type: string
+        category:
+          $ref: "#/components/schemas/EntityCategory"
+        name:
+          example: John doe
+          type: string
+        relationshipWithBorrower:
+          example: Father
+          type: string
+        contactDetails:
+          items:
+            $ref: "#/components/schemas/ContactDetail"
+          type: array
+        additionalIdentifiers:
+          items:
+            $ref: "#/components/schemas/AdditionalIdentifier"
+          type: array
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        url:
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/ApplicantExtensibleData"
+      type: object
+    LoanTerms:
+      required:
+        - sanctionedAmount
+        - currency
+        - interestRate
+        - tenure
+      properties:
+        requestedAmount:
+          example: "50000.00"
+          type: string
+        description:
+          type: string
+        currency:
+          example: INR
+          type: string
+        sanctionedAmount:
+          example: "5000.00"
+          type: string
+        interestType:
+          $ref: "#/components/schemas/InterestType"
+        interestRate:
+          example: "6.50"
+          type: string
+        interestAmount:
+          type: string
+        totalAmount:
+          type: string
+        tenure:
+          $ref: "#/components/schemas/LoanTenure"
+        legalAgreement:
+          $ref: "#/components/schemas/LoanAgreement"
+        documents:
+          items:
+            $ref: "#/components/schemas/Document"
+          type: array
+        charges:
+          $ref: "#/components/schemas/Charges"
+        url:
+          type: string
+          example: url
+        extensibleData:
+          $ref: "#/components/schemas/TermsExtensibleData"
+      type: object
+    Document:
+      required:
+        - source
+        - sourceIdentifier
+        - format
+        - reference
+        - type
+        - isDataInline
+        - data
+      properties:
+        source:
+          $ref: "#/components/schemas/DocumentSource"
+        sourceIdentifier:
+          example: GSTN
+          type: string
+        format:
+          $ref: "#/components/schemas/DocumentFormat"
+        reference:
+          example: docref12
+          type: string
+        type:
+          $ref: "#/components/schemas/DocumentType"
+        isDataInline:
+          type: boolean
+        data:
+          example: <Base64 encoded String>
+          type: string
+      type: object
+    DocumentSource:
+      type: string
+      enum:
+        - AA
+        - FIP
+        - FIU
+        - FSR
+        - USER
+        - GSTN
+    DocumentFormat:
+      type: string
+      enum:
+        - DOC
+        - IMAGE
+        - CSV
+        - JSON
+        - XML
+    DocumentType:
+      type: string
+      enum:
+        - GSTN_B2B_INVOICE
+        - GSTN_PROFILE
+        - PAN
+        - AADHAAR
+        - DRIVING_LICENSE
+        - PASSPORT
+        - OTHER
+    AccountType:
+      type: string
+      enum:
+        - SAVINGS
+        - CURRENT
+        - OVERDRAFT
+    InterestType:
+      type: string
+      enum:
+        - FIXED
+        - FLOATING
+    LoanTenure:
+      required:
+        - duration
+        - unit
+      properties:
+        duration:
+          example: "3"
+          type: string
+        unit:
+          $ref: "#/components/schemas/LoanTenureUnit"
+      type: object
+    LoanTenureUnit:
+      type: string
+      enum:
+        - DAY
+        - MONTH
+        - YEAR
+    LoanAgreement:
+      required:
+        - type
+        - data
+      properties:
+        type:
+          $ref: "#/components/schemas/LoanAgreementType"
+        data:
+          example: <Base64 Encode Data>
+          type: string
+      type: object
+    LoanAgreementType:
+      type: string
+      enum:
+        - TEXT
+        - URL
+    Charges:
+      properties:
+        prepayment:
+          $ref: "#/components/schemas/ChargeDetails"
+        bounce:
+          $ref: "#/components/schemas/ChargeDetails"
+        latePayment:
+          $ref: "#/components/schemas/ChargeDetails"
+        processing:
+          $ref: "#/components/schemas/ChargeDetails"
+        url:
+          type: string
+        extensibleData:
+          $ref: "#/components/schemas/ChargesExtensibleData"
+      type: object
+    ChargeDetails:
+      required:
+        - chargeType
+        - data
+      properties:
+        chargeType:
+          $ref: "#/components/schemas/ChargeType"
+        data:
+          $ref: "#/components/schemas/ChargeDetailsData"
+        description:
+          type: string
+          example: description
+        url:
+          type: string
+          example: url
+        extensibleData:
+          type: object
+      type: object
+    ChargesExtensibleData:
+      properties:
+        omniExtensibleChargeData:
+          $ref: "#/components/schemas/OmniExtensibleChargeData"
+      type: object
+    OmniExtensibleChargeData:
+      properties:
+        foreclosure:
+          $ref: "#/components/schemas/ChargeDetails"
+      type: object
+    ChargeType:
+      type: string
+      enum:
+        - FIXED_AMOUNT
+        - RATE_BASED
+    ChargeDetailsData:
+      properties:
+        rate:
+          example: "6.00"
+          type: string
+        amount:
+          example: "3000.00"
+          type: string
+        description:
+          type: string
+          example: "description"
+        url:
+          type: string
+          example: url
+        applicableParameter:
+          $ref: "#/components/schemas/ApplicableParameter"
+      type: object
+    BorrowerExtensibleData:
+      properties:
+        omniExtensibleBorrowerData:
+          $ref: "#/components/schemas/OmniExtensibleBorrowerData"
+      type: object
+    OmniExtensibleBorrowerData:
+      type: object
+      properties:
+        fatherName:
+          type: string
+        motherName:
+          type: string
+        spouseName:
+          type: string
+        noOfDependants:
+          type: integer
+        gender:
+          type: string
+        dob:
+          type: string
+        age:
+          type: integer
+        birthCountry:
+          type: string
+        maritalStatus:
+          type: string
+        religion:
+          type: string
+        nationality:
+          type: string
+        caste:
+          type: string
+        education:
+          type: string
+        emplomentType:
+          type: string
+        occupation:
+          type: string
+        cibil:
+          type: integer
+        UNSCRcheck:
+          type: string
+        politicallyExposed:
+          type: string
+        nsdl:
+          type: string
+        shareholding:
+          type: string
+        originatorScoreOnApplicant:
+          type: string
+        creditBureauVerification:
+          type: boolean
+        faceMatch:
+          type: string
+        employer:
+          $ref: "#/components/schemas/Employer"
+        incomeDetails:
+          $ref: "#/components/schemas/IncomeDetails"
+        collectionsAccount:
+          $ref: "#/components/schemas/BankAccount"
+        disbursalAccount:
+          $ref: "#/components/schemas/BankAccount"
+        creditLine:
+          $ref: "#/components/schemas/CreditLine"
+        kyc:
+          $ref: "#/components/schemas/Kyc"
+        pennyCheck:
+          $ref: "#/components/schemas/PennyCheck"
+        underwritingParameters:
+          $ref: "#/components/schemas/UnderwritingParameters"
+        business:
+          $ref: "#/components/schemas/Business"
+        companyFinancials:
+          $ref: "#/components/schemas/CompanyFinancials"
+    ApplicableParameter:
+      type: string
+      enum:
+        - TOTAL_LOAN_AMOUNT
+        - OUTSTANDING_PAYABLE_AMOUNT
+        - EMI
+        - PREPAYMENT_PRINCIPAL
